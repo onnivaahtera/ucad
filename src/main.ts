@@ -1,12 +1,15 @@
-import http from 'http';
-const hostname = '127.0.0.1';
+import express from 'express';
+
+const app = express();
 const port = 3000;
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello');
+app.set('view engine', 'pug');
+
+app.get('/', (req, res) => {
+  const values = {title: 'My REST API', message: 'Docs will be here!'};
+  res.render('index', values);
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`);
 });
