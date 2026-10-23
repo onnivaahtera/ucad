@@ -10,6 +10,8 @@ app.get('/', (req, res) => {
   res.render('index', values);
 });
 
+app.get('/api/media', (req, res) => {});
+
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
