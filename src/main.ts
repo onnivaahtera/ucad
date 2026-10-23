@@ -27,11 +27,9 @@ const server = http.createServer((req, res) => {
           color: string;
         };
         fruits.push(body);
-        res.write(JSON.stringify(fruits));
-        res.end();
+        res.end(JSON.stringify(fruits));
       });
   } else if (method === 'DELETE' && req.url === '/fruits') {
-    res.writeHead(200, {'content-type': 'application/json'});
     let body: any = [];
     req
       .on('data', (chunk) => {
@@ -43,16 +41,21 @@ const server = http.createServer((req, res) => {
           color: string;
         };
         const fruit = fruits.findIndex((f) => f.name === body.name);
-        if (fruit !== -1) {
+        console.log(fruit);
+        if (fruit === -1) {
+          res.writeHead(404, {'content-type': 'application/json'});
+          res.end(JSON.stringify({Message: 'Fruit does not exist'}));
+          return;
+        } else {
           fruits.splice(fruit, 1);
         }
-        res.write(
+        res.writeHead(200, {'content-type': 'application/json'});
+        res.end(
           JSON.stringify({Message: 'Deleted succsessfully', Data: fruits}),
         );
         res.end();
       });
   } else if (method === 'PUT' && req.url === '/fruits') {
-    res.writeHead(200, {'content-type': 'application/json'});
     let body: any = [];
     req
       .on('data', (chunk) => {
@@ -63,16 +66,18 @@ const server = http.createServer((req, res) => {
           name: string;
           color: string;
         };
-        fruits.map((item) => {
-          if (item.name === body.name) {
-            item.name = body.name;
-            item.color = body.color;
-          }
-        });
-        res.write(
+        const fruit = fruits.find((item) => item.name === body.name);
+        if (!fruit) {
+          res.writeHead(404, {'content-type': 'application/json'});
+          res.end(JSON.stringify({Message: 'Fruit does not exist'}));
+          return;
+        }
+        fruit.name = body.name;
+        fruit.color = body.color;
+        res.writeHead(200, {'content-type': 'application/json'});
+        res.end(
           JSON.stringify({Message: 'Updated succsessfully', Data: fruits}),
         );
-        res.end();
       });
   } else {
     res.writeHead(404, {'content-type': 'application/json'});
