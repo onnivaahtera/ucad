@@ -35,9 +35,9 @@ CREATE TABLE MediaItems (
 );
 
 CREATE TABLE MediaLikes (
-  comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  like_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   media_id INT NOT NULL,
   user_id INT NOT NULL,
   FOREIGN KEY (media_id) REFERENCES MediaItems(media_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id),
+  FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
