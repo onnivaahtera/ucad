@@ -1,7 +1,7 @@
-#Diagrammi tietokannan tauluista
+# Diagrammi tietokannan tauluista
 ![alt text](<images/Screenshot 2026-11-05 at 17.50.53.png>)
 
-#Scriptit tietokannan sekä taulujen luomiseen
+# Scriptit tietokannan sekä taulujen luomiseen
 
 ```sql
 DROP DATABASE IF EXISTS mediashare;
@@ -46,7 +46,7 @@ CREATE TABLE MediaLikes (
 );
 ```
 
-#Scriptit mock datan lisäämiseen
+# Scriptit mock datan lisäämiseen
 
 ```sql
 INSERT INTO UserLevels (user_level_id, level_name, description)
@@ -67,7 +67,7 @@ INSERT INTO MediaLikes (media_id, user_id)
          (3, 305);
 ```
 
-#Esimerkki queryjä
+# Esimerkki queryjä
 
 ```sql
 -- Get every media item and username of the owner
