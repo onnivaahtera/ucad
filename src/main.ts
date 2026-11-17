@@ -3,6 +3,7 @@ import mediaRouter from './media/routes.ts';
 import userRouter from './user/routes.ts';
 import likeRouter from './likes/routes.ts';
 import {logRequest} from './middlewares/logger.ts';
+import authRouter from './auth/routes.ts';
 
 const app = express();
 const port = 3000;
@@ -33,6 +34,8 @@ app.use('/api/media', mediaRouter);
 app.use('/api/users', userRouter);
 
 app.use('/api/likes/', likeRouter);
+
+app.use('/api/auth', authRouter);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);

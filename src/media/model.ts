@@ -47,7 +47,7 @@ export const updateMedia = async (
   }
 };
 
-export const deleteMedia = async (id: number) => {
+export const deleteMedia = async (id: number, user_id: number) => {
   try {
     const connection = await promisePool.getConnection();
     await connection.beginTransaction();
@@ -57,12 +57,15 @@ export const deleteMedia = async (id: number) => {
     await connection.query(`DELETE FROM MediaItemTags WHERE media_id = ?;`, [
       id,
     ]);
-    const [result] = await connection.query(
-      `DELETE FROM MediaItems WHERE media_id = ?;`,
-      [id],
+    const [result] = await connection.query<ResultSetHeader>(
+      `DELETE FROM MediaItems WHERE media_id = ? AND user_id = ?;`,
+      [id, user_id],
     );
+    if (result.affectedRows === 0) {
+      await connection.rollback();
+      return {ok: false, error: 'Media not found'};
+    }
     await connection.commit();
-    console.log(result);
     return {ok: true, message: 'Media deleted'};
   } catch (e) {
     console.error('error', e);

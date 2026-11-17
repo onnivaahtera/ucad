@@ -102,3 +102,25 @@ export const removeUser = async (id: number) => {
     return {ok: false, error: e};
   }
 };
+
+interface authUserInterface extends RowDataPacket {
+  user_id: number;
+  username: string;
+  password: string;
+  email: string;
+}
+
+export const getUserByUsername = async (username: string) => {
+  try {
+    const [rows] = await promisePool.query<authUserInterface[]>(
+      `SELECT user_id, username, password, email FROM Users WHERE username = ?`,
+      [username],
+    );
+    if (rows.length === 0) {
+      return {ok: false, message: 'Incorrect username or password'};
+    }
+    return {ok: true, data: rows};
+  } catch (e) {
+    return {ok: false, error: e};
+  }
+};

@@ -7,6 +7,7 @@ import {
   updateMediaItem,
   uploadMedia,
 } from './controller.ts';
+import {authenticateToken} from '../middlewares/authentication.ts';
 
 const upload = multer({dest: 'uploads/'});
 
@@ -15,12 +16,12 @@ const mediaRouter = express.Router();
 mediaRouter
   .route('/')
   .get(getAllmedia)
-  .post(upload.single('file'), uploadMedia);
+  .post(authenticateToken, upload.single('file'), uploadMedia);
 
 mediaRouter
   .route('/:id')
   .get(getMediaById)
   .put(updateMediaItem)
-  .delete(deleteMediaItem);
+  .delete(authenticateToken, deleteMediaItem);
 
 export default mediaRouter;

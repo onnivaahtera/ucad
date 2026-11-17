@@ -13,8 +13,9 @@ export const uploadMedia = async (req: Request, res: Response) => {
   }
 
   const {filename, size, mimetype} = req.file;
-  const {title, description, user_id} = req.body;
-
+  const {title, description} = req.body;
+  if (!req.user || typeof req.user === 'string') return res.sendStatus(401);
+  const user_id = (req.body.user_id = req.user?.user_id);
   if (filename && title && user_id) {
     const result = await addMedia({
       filename,
@@ -67,9 +68,11 @@ export const updateMediaItem = async (req: Request, res: Response) => {
 };
 
 export const deleteMediaItem = async (req: Request, res: Response) => {
-  const result = await deleteMedia(Number(req.params.id));
+  if (!req.user || typeof req.user === 'string') return res.sendStatus(401);
+  console.log(req.user);
+  const result = await deleteMedia(Number(req.params.id), req.user?.user_id);
   if (!result.ok) {
-    return res.status(500).json({message: result.error});
+    return res.status(404).json({message: result.error});
   }
   return res.json(result);
 };
