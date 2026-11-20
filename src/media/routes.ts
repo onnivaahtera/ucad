@@ -21,7 +21,7 @@ mediaRouter
 mediaRouter
   .route('/:id')
   .get(getMediaById)
-  .put(updateMediaItem)
+  .put(authenticateToken, updateMediaItem)
   .delete(authenticateToken, deleteMediaItem);
 
 export default mediaRouter;
