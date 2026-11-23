@@ -1,5 +1,7 @@
 # Autentikaatio
 
+mitkä osiot sait tehtyä: Kaikki paitsi bonus osio
+mahdolliset ongelmat: ei password hashing
 ![alt text](<images/Screenshot 2026-11-23 at 21.05.50.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 21.06.09.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 21.06.23.png>)
@@ -7,6 +9,8 @@
 
 # Validaatio
 
+mitkä osiot sait tehtyä: Kaikki
+mahdolliset ongelmat: Osa inputeista voisi olla vielä tarkemmin validoitu
 ![alt text](<images/Screenshot 2026-11-23 at 21.11.22.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 20.59.41.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 20.59.49.png>)
