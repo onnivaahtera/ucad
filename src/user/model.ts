@@ -27,11 +27,14 @@ export const listUserById = async (id: number) => {
   }
 };
 
-export const createUser = async (data: (string | unknown)[]) => {
+export const createUser = async (
+  data: (string | unknown)[],
+  user_id: number,
+) => {
   try {
     const [_result] = await promisePool.query(
       `INSERT INTO Users (username, password, email, user_level_id) VALUES (?, ?, ?, ?)`,
-      [...data],
+      [...data, user_id],
     );
     return {ok: true, message: 'User created'};
   } catch (e) {
@@ -41,14 +44,14 @@ export const createUser = async (data: (string | unknown)[]) => {
 };
 
 export const updateUser = async (
-  id: number,
+  user: any,
   data: {keys: string[]; values: (string | unknown)[]},
 ) => {
   const cols = data.keys.map((col) => `${col} = ?`).join(', ');
   try {
     const [result] = await promisePool.query(
       `UPDATE Users SET ${cols} WHERE user_id = ? RETURNING *`,
-      [...data.values, id],
+      [...data.values, user.user_id],
     );
 
     console.log(result);

@@ -31,14 +31,20 @@ export const listMediaById = async (id: number) => {
 
 export const updateMedia = async (
   id: number,
+  user: any,
   data: {keys: string[]; values: (string | unknown)[]},
 ) => {
   const cols = data.keys.map((col) => `${col} = ?`).join(', ');
+  let sql, params;
   try {
-    const [result] = await promisePool.query(
-      `UPDATE MediaItems SET ${cols} WHERE media_id = ? RETURNING *`,
-      [...data.values, id],
-    );
+    if (user.user_level_id === 1) {
+      sql = `UPDATE MediaItems SET ${cols} WHERE media_id = ? RETURNING *`;
+      params = [...data.values, id];
+    } else {
+      sql = `UPDATE MediaItems SET ${cols} WHERE media_id = ? AND user_id = ? RETURNING *`;
+      params = [...data.values, id, user.user_id];
+    }
+    const [result] = await promisePool.execute(sql, params);
     console.log(result);
     return {ok: true, data: result};
   } catch (e) {
@@ -47,26 +53,53 @@ export const updateMedia = async (
   }
 };
 
-export const deleteMedia = async (id: number, user_id: number) => {
+export const deleteMedia = async (id: number, user: any) => {
   try {
-    const connection = await promisePool.getConnection();
-    await connection.beginTransaction();
-    await connection.query(`DELETE FROM Comments WHERE media_id = ?;`, [id]);
-    await connection.query(`DELETE FROM Likes WHERE media_id = ?;`, [id]);
-    await connection.query(`DELETE FROM Ratings WHERE media_id = ?;`, [id]);
-    await connection.query(`DELETE FROM MediaItemTags WHERE media_id = ?;`, [
-      id,
-    ]);
-    const [result] = await connection.query<ResultSetHeader>(
-      `DELETE FROM MediaItems WHERE media_id = ? AND user_id = ?;`,
-      [id, user_id],
-    );
-    if (result.affectedRows === 0) {
-      await connection.rollback();
-      return {ok: false, error: 'Media not found'};
+    if (user.user_level_id === 1) {
+      const connection = await promisePool.getConnection();
+      await connection.beginTransaction();
+      await connection.query(`DELETE FROM Comments WHERE media_id = ?;`, [id]);
+      await connection.query(`DELETE FROM Likes WHERE media_id = ?;`, [id]);
+      await connection.query(`DELETE FROM Ratings WHERE media_id = ?;`, [id]);
+      await connection.query(`DELETE FROM MediaItemTags WHERE media_id = ?;`, [
+        id,
+      ]);
+      const [result] = await connection.query<ResultSetHeader>(
+        `DELETE FROM MediaItems WHERE media_id = ?;`,
+        [id, user.user_id],
+      );
+      if (result.affectedRows === 0) {
+        await connection.rollback();
+        return {ok: false, error: 'Media not found'};
+      }
+      await connection.commit();
+      return {ok: true, message: 'Media deleted'};
+    } else {
+      const connection = await promisePool.getConnection();
+      await connection.beginTransaction();
+      await connection.query(
+        `DELETE FROM Comments WHERE media_id = ? AND user_id = ?;`,
+        [id, user.user_id],
+      );
+      await connection.query(
+        `DELETE FROM Likes WHERE media_id = ? AND user_id = ?;`,
+        [id, user.user_id],
+      );
+      await connection.query(`DELETE FROM Ratings WHERE media_id = ?;`, [id]);
+      await connection.query(`DELETE FROM MediaItemTags WHERE media_id = ?;`, [
+        id,
+      ]);
+      const [result] = await connection.query<ResultSetHeader>(
+        `DELETE FROM MediaItems WHERE media_id = ? AND user_id = ?;`,
+        [id, user.user_id],
+      );
+      if (result.affectedRows === 0) {
+        await connection.rollback();
+        return {ok: false, error: 'Media not found'};
+      }
+      await connection.commit();
+      return {ok: true, message: 'Media deleted'};
     }
-    await connection.commit();
-    return {ok: true, message: 'Media deleted'};
   } catch (e) {
     console.error('error', e);
     return {ok: false, error: e};

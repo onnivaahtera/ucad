@@ -8,10 +8,9 @@ import {
 } from './model.ts';
 
 export const uploadMedia = async (req: Request, res: Response) => {
-  if (!req.file || !req.body) {
-    return res.json({message: 'No file'});
+  if (!req.file) {
+    return res.status(400).json({error: 'Invalid or missing file'});
   }
-
   const {filename, size, mimetype} = req.file;
   const {title, description} = req.body;
   if (!req.user || typeof req.user === 'string') return res.sendStatus(401);
@@ -54,10 +53,7 @@ export const getMediaById = async (req: Request, res: Response) => {
 };
 
 export const updateMediaItem = async (req: Request, res: Response) => {
-  if (!req.body || Object.entries(req.body).length === 0) {
-    return res.status(400).json({message: 'No request body'});
-  }
-  const result = await updateMedia(Number(req.params.id), {
+  const result = await updateMedia(Number(req.params.id), req.user, {
     keys: Object.keys(req.body),
     values: Object.values(req.body),
   });
@@ -70,7 +66,7 @@ export const updateMediaItem = async (req: Request, res: Response) => {
 export const deleteMediaItem = async (req: Request, res: Response) => {
   if (!req.user || typeof req.user === 'string') return res.sendStatus(401);
   console.log(req.user);
-  const result = await deleteMedia(Number(req.params.id), req.user?.user_id);
+  const result = await deleteMedia(Number(req.params.id), req.user);
   if (!result.ok) {
     return res.status(404).json({message: result.error});
   }

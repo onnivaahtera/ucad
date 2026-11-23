@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import {
   deleteMediaItem,
   getAllmedia,
@@ -8,8 +7,9 @@ import {
   uploadMedia,
 } from './controller.ts';
 import {authenticateToken} from '../middlewares/authentication.ts';
-
-const upload = multer({dest: 'uploads/'});
+import upload from '../middlewares/upload.ts';
+import {validationError} from '../middlewares/error-handler.ts';
+import {body} from 'express-validator';
 
 const mediaRouter = express.Router();
 
@@ -21,7 +21,13 @@ mediaRouter
 mediaRouter
   .route('/:id')
   .get(getMediaById)
-  .put(authenticateToken, updateMediaItem)
+  .put(
+    body('title').trim().notEmpty(),
+    body('description').trim().notEmpty(),
+    validationError,
+    authenticateToken,
+    updateMediaItem,
+  )
   .delete(authenticateToken, deleteMediaItem);
 
 export default mediaRouter;

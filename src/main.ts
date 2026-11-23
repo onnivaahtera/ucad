@@ -4,6 +4,7 @@ import userRouter from './user/routes.ts';
 import likeRouter from './likes/routes.ts';
 import {logRequest} from './middlewares/logger.ts';
 import authRouter from './auth/routes.ts';
+import {errorHandler, notFoundHandler} from './middlewares/error-handler.ts';
 
 const app = express();
 const port = 3000;
@@ -36,6 +37,9 @@ app.use('/api/users', userRouter);
 app.use('/api/likes/', likeRouter);
 
 app.use('/api/auth', authRouter);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);

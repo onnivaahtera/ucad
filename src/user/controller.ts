@@ -1,4 +1,4 @@
-import type {Request, Response} from 'express';
+import type {Request, Response, NextFunction} from 'express';
 import {
   createUser,
   listAllUsers,
@@ -6,6 +6,7 @@ import {
   removeUser,
   updateUser,
 } from './model.ts';
+import {validationResult} from 'express-validator';
 
 export const getAllUsers = async (_req: Request, res: Response) => {
   const result = await listAllUsers();
@@ -24,10 +25,10 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const updateUserItem = async (req: Request, res: Response) => {
-  if (!req.body || Object.entries(req.body).length === 0) {
-    return res.status(400).json({error: 'No request body'});
+  if (!req.user) {
+    return res.status(401);
   }
-  const result = await updateUser(Number(req.params.id), {
+  const result = await updateUser(req.user, {
     keys: Object.keys(req.body),
     values: Object.values(req.body),
   });
@@ -38,10 +39,9 @@ export const updateUserItem = async (req: Request, res: Response) => {
 };
 
 export const addUser = async (req: Request, res: Response) => {
-  if (!req.body || Object.entries(req.body).length === 0) {
-    return res.status(400).json({error: 'No request body'});
-  }
-  const result = await createUser(Object.values(req.body));
+  const user_id = 2;
+  const result = await createUser(Object.values(req.body), user_id);
+
   if (!result.ok) {
     return res.status(500).json({message: result.error});
   }

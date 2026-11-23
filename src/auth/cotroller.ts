@@ -5,9 +5,6 @@ import 'dotenv/config';
 
 export const postLogin = async (req: Request, res: Response) => {
   const {username, password} = req.body;
-  if (!username || !password) {
-    return res.status(400).json({error: 'No username or password'});
-  }
 
   const user = await getUserByUsername(username);
 
@@ -20,8 +17,6 @@ export const postLogin = async (req: Request, res: Response) => {
       expiresIn: '24h',
     });
     return res.json({user, token});
-  } else {
-    return res.status(403).json({message: 'Incorrect username or password'});
   }
 };
 
