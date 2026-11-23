@@ -10,7 +10,7 @@ authRouter
   .route('/login')
   .post(
     body('username').trim().notEmpty(),
-    body('password').trim(),
+    body('password').trim().notEmpty(),
     validationError,
     postLogin,
   );

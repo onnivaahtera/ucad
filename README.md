@@ -7,6 +7,7 @@
 
 # Validaatio
 
+![alt text](<images/Screenshot 2026-11-23 at 21.11.22.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 20.59.41.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 20.59.49.png>)
 ![alt text](<images/Screenshot 2026-11-23 at 21.02.14.png>)
